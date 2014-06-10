@@ -1,0 +1,344 @@
+// Copyright, May 2014, Tsinghua Unviersity. 
+// Yang Hu.
+
+
+import ddf.minim.spi.*;
+import ddf.minim.signals.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
+import gifAnimation.*;
+import processing.serial.*; 
+
+Serial myPort;
+
+Minim minim;
+AudioPlayer player;
+AudioPlayer music_fly;
+AudioPlayer music_desert;
+AudioPlayer music_cookie;
+AudioPlayer music_donuts;
+
+int bgs_number = 2;
+int fly_background_num = 6;
+int available_background_num = 11;
+int donuts_number = 2;
+int cookie_number = 4;
+int fly_object_number = 3;
+int [] onScreen = new int[available_background_num + donuts_number + cookie_number];  // bonus and extra
+int [] onMove = new int[available_background_num + donuts_number + cookie_number];  // bonus and extra
+float [] text_pos = new float [fly_object_number];
+
+int threshold = 150;
+
+
+IntList  _backgrounds;
+IntList _bgs;
+IntList  current_backgrounds;
+PFont _font;
+ArrayList<Background> backgrounds;
+ArrayList<Animation> animations;
+ArrayList<Cookie> cookies;
+ArrayList<Donuts> donuts;
+int []score = new int [fly_object_number];
+
+int cookieTimeStamp = 0;
+int donutsTimeStamp = 0;
+int cookieTime;
+int donutsTime;
+PImage bgs;
+PImage score_img;
+int current_bg;
+int playMusic;
+int playFly;
+int playCookie;
+int playDonuts;
+
+void setup(){
+  
+  current_bg = int(random(0, bgs_number ));
+  _bgs = new IntList();
+  for (int i = 0; i < bgs_number; i++){
+    _bgs.append(i);
+  }
+  _bgs.remove(current_bg);
+  bgs = loadImage("bg_" + nf(current_bg, 2) + ".jpg");
+  size(bgs.width, bgs.height);
+  
+  
+  
+  _backgrounds = new IntList();
+  for (int i = 0; i < available_background_num; i++){
+    _backgrounds.append(i);
+  }
+  current_backgrounds = new IntList();
+ 
+  _font = loadFont("MicrosoftYaHei-Bold-48.vlw"); 
+ 
+  backgrounds = new ArrayList<Background>();
+  for (int i = 0; i < available_background_num ; i++){
+    String gifName = "background_"+ nf(i, 2) + ".gif";
+    PImage[] frames = Gif.getPImages(this, gifName); 
+    Background bg = new Background(frames, i);
+    bg.setSpeed(5);
+    bg.setX(width * 2);
+    backgrounds.add(bg);
+  }
+  
+  int temp = 0;
+  for (int i = 0; i < fly_background_num; i++){
+    int index = (int)random(0, _backgrounds.size() - 1);
+    int number = _backgrounds.get(index);
+    _backgrounds.remove(index);
+    current_backgrounds.append(number);
+    backgrounds.get(number).setX((float)temp / fly_background_num * width);
+    temp ++;
+    onScreen[number] = 1;
+    onMove[number] = 1;
+  }
+  animations = new ArrayList<Animation>();
+  for (int i = 0; i < available_background_num ; i++){
+    String gifName = "animation_"+ nf(i, 2) + ".gif";
+    PImage[] frames = Gif.getPImages(this, gifName); 
+    Animation ani = new Animation(frames, i);
+    animations.add(ani);
+  }
+  
+  donuts = new ArrayList<Donuts>();
+  for (int i = 0; i < donuts_number; i++){
+    String pngName = "donuts_"+ nf(i, 2) + ".png";
+    PImage image = loadImage(pngName);
+    Donuts donut = new Donuts(image, i + available_background_num);
+    donut.setX(width * 2);
+    donut.setSpeed(-20);
+    donuts.add(donut);
+  }
+  
+  cookies = new ArrayList<Cookie>();
+    for (int i = 0; i < cookie_number; i++){
+    String pngName = "cookie_"+ nf(i, 2) + ".png";
+    PImage image = loadImage(pngName);
+    Cookie bis = new Cookie(image, i + available_background_num + donuts_number);
+    bis.setX(width * 2);
+    bis.setSpeed(-20);
+    cookies.add(bis);
+  }
+  
+  cookieTime = int(random(15 * frameRate , 20 * frameRate));
+  donutsTime = int(random(5 * frameRate , 10 * frameRate));
+  
+  text_pos[0] = width / 10;
+  text_pos[1] = width / 2;
+  text_pos[2] = width / 10 * 9;
+  score_img = loadImage("score.png");
+  
+  
+  println(Serial.list()); // List all the available serial ports:
+  myPort = new Serial(this, Serial.list()[0], 9600);
+  
+  minim = new Minim(this);
+  player = minim.loadFile("Salade De Fruits.mp3", 2048);
+  player.loop();
+  player.play();
+  music_fly = minim.loadFile("fly.mp3", 2048);
+  //music_fly.close();
+  music_desert = minim.loadFile("fly.mp3", 2048);
+  //music_desert.close();
+  music_cookie = minim.loadFile("fly.mp3", 2048);
+  //music_cookie.close();
+  music_donuts = minim.loadFile("fly.mp3", 2048);
+  //music_donuts.close();
+}
+
+
+void draw(){
+  
+  frameRate(10);
+  background(bgs);
+  
+  // read from serial
+  int []signal = new int[ 2 * fly_object_number];
+  if ( myPort.available() > 0) {  
+   for (int j = 0; j < 2 * fly_object_number; j++){
+       signal[j] = myPort.read();
+       //println(signal[j]);
+   }
+   for (int j = 0; j < fly_object_number; j++){
+       if (signal[j]  < threshold && signal[j + fly_object_number] > threshold){
+         active(signal[j], j);
+       }   
+   }
+    
+   }
+  
+  
+  // in the default state, 6 background objects move from left to right
+   for (int i = 0; i < available_background_num ; i++){
+   if (onScreen[i] == 1 && onMove[i] == 1){
+     backgrounds.get(i).display();  
+     
+     // music
+   }
+   // if actived, starts to animate
+   if (onScreen[i] == 0 && onMove[i] == 1){
+     backgrounds.get(i).display();
+     animations.get(i).display();
+     // music
+     
+   }
+   }
+   
+   for (int i = 0; i < 9; i++){
+     if (onScreen[i] == 0 && onMove[i] == 1){
+       playMusic = 1;
+     }
+   }
+   
+   for (int i = 9; i < 11; i++){
+     if (onScreen[i] == 0 && onMove[i] == 1){
+       playFly = 1;
+     }
+   }
+   
+   for (int i = 11; i < 13; i++){
+     if (onScreen[i] == 0 && onMove[i] == 1){
+       playDonuts = 1;
+     }
+   }
+   for (int i = 13; i < 17; i++){
+     if (onScreen[i] == 0 && onMove[i] == 1){
+       playCookie = 1;
+     }
+   }
+   
+  if (playMusic == 1){
+    music_desert.rewind();
+    music_desert.play();
+  }
+  else{
+   // music_desert.close();
+  }
+  
+  
+  
+   for (int i = 0; i < donuts_number ; i++){
+     if (onScreen[i + available_background_num ] == 1 && onMove[i + available_background_num] == 1){
+     donuts.get(i).display(); 
+     // music
+   }
+   if (onScreen[i + available_background_num ] == 0 && onMove[i + available_background_num] == 1){
+     donuts.get(i).display();
+    // animations.get(i).display();
+     // music
+   }     
+   }
+  
+   for (int i = 0; i < cookie_number ; i++){
+     if (onScreen[i + available_background_num + donuts_number ] == 1 && 
+     onMove[i + available_background_num + donuts_number] == 1){
+     cookies.get(i).display(); 
+     // music
+   }
+    if (onScreen[i + available_background_num + donuts_number ] == 0 && 
+     onMove[i + available_background_num + donuts_number] == 1){
+     cookies.get(i).display();
+    // animations.get(i).display();
+     // music
+   }     
+   }
+   donutsTimeStamp ++;
+   cookieTimeStamp ++;
+  if (donutsTimeStamp == donutsTime){    
+    int ind = int(random(0, donuts_number ));
+    onMove[available_background_num + ind] = 1;
+    onScreen[available_background_num + ind] = 1;
+    donuts.get(ind).setX(width);
+    donuts.get(ind).setSpeed(-20);
+    
+  }
+
+   if (cookieTimeStamp == cookieTime){
+    int ind = int(random(0, cookie_number ));
+    onMove[available_background_num + donuts_number + ind] = 1;
+    onScreen[available_background_num + donuts_number + ind] = 1;
+    cookies.get(ind).setX(width);
+    cookies.get(ind).setSpeed(-20);
+    
+   
+  }
+  textFont(_font);
+  fill(255, 102, 153);
+  textSize(25);
+
+  textAlign(CENTER);
+  for (int i = 0; i < fly_object_number; i++){
+    text("Score " + score[i], text_pos[i] , 35);
+  }
+  
+   imageMode(CENTER);
+   for (int i = 0; i < 3; i++){
+     image(score_img, text_pos[i], 28, 250, 60);
+   }
+
+}
+void active(float signal, int light_index){
+ 
+  float position = ((float)light_index + 1) / ((float)fly_object_number + 1) * width;
+  int background_index = 0;
+  float distance = width;
+  for (int i = 0; i < available_background_num; i++){
+    if (abs(position - backgrounds.get(i).getX()) < distance){
+      distance = abs(position - backgrounds.get(i).getX());
+      background_index = i;
+    }
+  }
+  
+    for (int i = 0; i < donuts_number; i++){
+    if (abs(position - donuts.get(i).getX()) < distance){
+      distance = abs(position - donuts.get(i).getX());
+      background_index = i + available_background_num;
+    }
+  }
+  
+   for (int i = 0; i < cookie_number; i++){
+    if (abs(position - cookies.get(i).getX()) < distance){
+      distance = abs(position - cookies.get(i).getX());
+      background_index = i + available_background_num + donuts_number;
+    }
+  }
+  
+  if (background_index < available_background_num){
+    animations.get(background_index).setX( backgrounds.get(background_index).getX() );
+  }
+  
+  onScreen[background_index] = 0;
+  if (background_index < available_background_num - 2){
+    score[light_index] = score[light_index] + 5;
+    
+  }
+  else if (background_index < available_background_num ){
+    
+   for (int i = 0; i < fly_object_number; i++){
+     if (score[i] > 0){
+       score[i] = score[i] - 5;
+     }
+   }
+  }
+  else if (background_index < available_background_num + donuts_number){
+    score[light_index] = score[light_index] + 10;
+  }
+  else{
+    score[light_index] = score[light_index] + 20;
+  }
+  for (int i = 0; i < fly_object_number; i++){
+    if (score[i] >= 100){
+      score[i] -= 100;
+    }
+  }
+  text_display(light_index);
+  // score ++
+}
+void text_display(int index){
+  
+}
