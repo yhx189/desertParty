@@ -1,0 +1,57 @@
+void Petal(int snowColor,int opacity,float scale){
+ 
+fill(snowColor,opacity);
+//strokeWeight(2.0*scale);
+//strokeJoin(MITER);
+noStroke();
+beginShape(TRIANGLES);
+vertex(0, 0);
+vertex(10*scale, -10*scale);
+vertex(10*scale, 10*scale);
+
+endShape();
+
+
+//beginShape();
+//vertex(0, 0);
+//vertex(10*scale, -10*scale);
+//vertex(10*scale, -30*scale);
+//vertex(0, -40*scale);
+//vertex(-10*scale, -30*scale);
+//vertex(-10*scale, -10*scale);
+//vertex(0, 0);
+//endShape();
+//
+//stroke(snowColor,opacity);
+//line(0,-40*scale,0,-80*scale);
+//line(-10*scale,-30*scale,-30*scale,-50*scale);
+//line(10*scale,-30*scale,30*scale,-50*scale);
+//
+//ellipse(-30*scale,-30*scale,15*scale,15*scale);
+//
+//noFill();
+//strokeWeight(2.0*scale);
+//strokeJoin(MITER);
+//
+//beginShape();
+//vertex(-20*scale, -60*scale);
+//vertex(0, -40*scale);
+//vertex(20*scale, -60*scale);
+//endShape();
+//beginShape();
+//vertex(-15*scale, -65*scale);
+//vertex(0, -50*scale);
+//vertex(15*scale, -65*scale);
+//endShape();
+//beginShape();
+//vertex(-10*scale, -70*scale);
+//vertex(0, -60*scale);
+//vertex(10*scale, -70*scale);
+//endShape();
+//beginShape();
+//vertex(-5*scale, -75*scale);
+//vertex(0, -70*scale);
+//vertex(5*scale, -75*scale);
+//endShape();
+
+}
