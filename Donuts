@@ -1,0 +1,274 @@
+class Donuts{
+  PImage frame;
+  int index;
+  int frm;
+  float xpos;
+  float speed;
+  float ypos = height * 0.90;
+  ArrayList snowList;
+  float wind;
+  int animation_frm;
+  float getX(){
+    return xpos;
+  }
+  void setX(float xx){
+    xpos = xx;
+  }
+ void setSpeed(float xx){
+    speed = xx;
+  }
+  
+  void display(){
+    if (onScreen[index] == 1){
+      imageMode(CENTER);
+      pushMatrix();
+      
+      translate(   xpos,    ypos);
+      rotate( - frm * TWO_PI / 10);
+      //translate(-frame.width/2, -frame.height / 2);
+      image(frame, 0, 0, width / 12, width / 12 * 3 /4);
+      
+      popMatrix();
+      }
+     
+    if (onMove[index] == 1){
+     if(onScreen[index] == 0){
+        animation_frm ++;
+        int snowColor=0xFFFFFFFF;
+        int c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+
+
+       
+        Snow aa = new Snow(snowColor,int(random(255)));
+        snowList.add(aa);
+        c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+        Snow bb = new Snow(snowColor,int(random(255)));
+        snowList.add(bb);
+        c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+        Snow cc = new Snow(snowColor,int(random(255)));
+        snowList.add(cc);
+          c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+        Snow dd = new Snow(snowColor,int(random(255)));
+        snowList.add(dd);
+        c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+        Snow ee = new Snow(snowColor,int(random(255)));
+        snowList.add(ee);
+        c = (int)random(1, 8.2);
+        if (c == 1) {
+          snowColor = (int)0xFFe39cba;
+        }else if ( c == 2) {
+          snowColor = (int)0xFFf6ecae;
+        }else if (c ==3){
+          snowColor = (int)0xFF2371bb;
+        }else if (c == 4) {
+          snowColor = (int)0xFFd12231;
+        }else if ( c == 5) {
+          snowColor = (int)0xFFa7f3d9;
+        }else if (c == 6){
+          snowColor = (int)0xFF2f236b;
+        }else if (c == 7) {
+          snowColor = (int)0xFF85a164;
+        }else if (c == 8) {
+          snowColor = (int)0xFF76413d;
+        }
+        Snow ff = new Snow(snowColor,int(random(255)));
+        snowList.add(ff);
+        
+        for (int i = 0;i < snowList.size(); i++){
+        Snow snow = (Snow) snowList.get(i);
+        pushMatrix();
+          translate(snow.x,snow.y);
+          snow.melt++;
+         
+          if(snow.y < snow.stopY) {
+            snow.x = snow.x + wind + snow.xOffset;
+            snow.y = snow.y + random(1,4);
+            snow.rotate += snow.rotateOffset;
+            rotate(snow.rotate);
+            snow.fall();
+            }
+          
+          snow.display();
+        popMatrix();
+        
+        if (snow.melt > 30){
+          snowList.remove(snow);
+          snow = null;
+        }
+        }
+     
+       if (animation_frm > frameRate * 5){
+             donutsTimeStamp = 0;    
+             donutsTime = int(random(5 * frameRate , 10 * frameRate));
+             onMove[index] = 0;
+             onScreen[index] = 0;
+             xpos = 2 * width;
+       }
+       
+       
+       xpos = xpos + 1 * speed;
+    }
+    else{
+      frm ++;
+      xpos = xpos + speed;
+    }
+    }
+    if (xpos < 0){
+     // xpos = xpos + width;
+     donutsTimeStamp = 0;
+     
+     donutsTime = int(random(5 * frameRate , 10 * frameRate));
+     onMove[index] = 0;
+     onScreen[index] = 0;
+     xpos = 2 * width;
+    }
+    
+  }
+    Donuts(PImage frms, int ind){
+    index = ind;
+    frame = frms;
+    snowList= new ArrayList();
+    wind =random(0.03,0.07);
+  }
+  
+}
+
+class Snow{
+
+  int SnowColor;
+  float x;
+  float y;
+  float speedX;
+  float speedY;
+  float scale = random(1, 2);
+  int opacity;
+  float rotate;
+  int xOffset;
+  float rotateOffset;
+  float stopY;
+  int melt=0;
+  Snow(int _SnowColor,int _opacity){
+    SnowColor =_SnowColor;
+    x =random(-width, width);
+    y =0;
+    speedX = random(-3,4);
+    speedY = random(5, 20);
+    opacity =_opacity;
+    rotate = 0;
+    xOffset = (int)random(-2,2);
+    rotateOffset = random(-PI/8,PI/8);
+    stopY = random(height*0.99,height);
+  }
+  
+  void display(){
+    
+      drawPetal(SnowColor,(int)random(100,255),scale);
+      
+    
+    }
+
+  void fall(){
+  y += speedY;
+  x += speedX;
+  }
+
+   void drawPetal(int snowColor,int opacity, float scale){
+
+ 
+    //int i=0;
+  
+  
+    //for (i=0;i<=3;i++){
+    
+    //  rotate(i*PI/2);
+      Petal(snowColor,opacity,scale);
+  
+    //}
+
+  }
+}
