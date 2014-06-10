@@ -1,0 +1,66 @@
+class Background{
+  PImage[] frames;
+  int index;
+  int frm;
+  float xpos;
+  float speed;
+  float ypos = height * 0.80;
+  
+  
+  float getX(){
+    return xpos;
+  }
+  void setX(float xx){
+    xpos = xx;
+  }
+ void setSpeed(float xx){
+    speed = xx;
+  }
+  float getSpeed(){
+    return speed ;
+  }
+  void display(){
+    if (onScreen[index] == 1){
+      imageMode(CENTER);
+      image(frames[frm], xpos, ypos, width / fly_background_num, width / fly_background_num * 4/3);
+      
+      }
+      
+    if (onMove[index] == 1){
+    frm ++;
+    if (frm == frames.length){
+      frm = 0;
+    }
+    xpos = xpos + speed;
+    if (xpos > width){
+      //xpos = xpos - width;
+      int s = int(random(0, _backgrounds.size() - 1));
+      int j = _backgrounds.get(s);
+      _backgrounds.remove(s);
+      current_backgrounds.append(j);
+      onMove[j] = 1;
+      onScreen[j] = 1;
+      backgrounds.get(j).setX(xpos - width);
+      
+      
+      
+      _backgrounds.append(index);
+      onMove[index] = 0;
+      onScreen[index] = 0;
+      xpos = width * 2; // widht * 2 is regarded as INF
+      
+    }
+    }
+  }
+  int getIndex(){
+    return index;
+  }
+  
+    Background(PImage[] frms, int ind){
+    index = ind;
+    frames = new PImage[frms.length];
+    for (int i = 0; i < frms.length; i++){
+      frames[i] = frms[i];
+    }  
+  }
+}
