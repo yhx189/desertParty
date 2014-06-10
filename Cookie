@@ -1,0 +1,115 @@
+class Cookie{
+  PImage frame;
+  int index;
+  int frm;
+  float xpos;
+  float speed;
+  float ypos = height * 0.90;
+  int animation_frm;
+  int up_frm;
+  PImage cookie_animation;
+  PImage curtain ;
+  int bg_mark;
+  
+  
+  float getX(){
+    return xpos;
+  }
+  void setX(float xx){
+    xpos = xx;
+  }
+ void setSpeed(float xx){
+    speed = xx;
+  }
+  
+  void display(){
+    
+    if (onScreen[index] == 1){
+      imageMode(CENTER);
+      pushMatrix();
+      translate( xpos , ypos );
+      rotate( - frm * TWO_PI / 10);
+      image(frame, 0, 0, width / 12, width / 12 * 3/4);
+      
+      popMatrix(); 
+   
+      }
+      
+    if (onMove[index] == 1){
+    if(onScreen[index] == 0){
+      //image(cookie_animation, width/2, height/2, width, height);
+     
+      
+      if (ypos > 0){
+        ypos = ypos - 50;
+        xpos = width / 2;
+        up_frm ++;
+        imageMode(CENTER);
+        image(frame, xpos, ypos, width / 12  - up_frm, width / 12 * 3/4 - up_frm);
+      }
+      else{
+           
+    
+          cookie_animation.loadPixels();
+          
+          bgs.loadPixels();
+          if (animation_frm * 6 < height){
+            
+            for (int i = 0 ; i < animation_frm * width * 6 ; i++){
+               bgs.pixels[i] = cookie_animation.pixels[i];
+             }
+              bgs.updatePixels();
+              animation_frm ++;
+          }  
+          else{
+              up_frm = 0;
+              animation_frm = 0;
+              xpos = width * 2;
+              ypos = height * 0.90;
+              onMove[index] = 0;
+              onScreen[index] = 0;
+              donutsTimeStamp = 0;
+              cookieTimeStamp = 0;
+              cookieTime = int(random(8 * frameRate , 10 * frameRate));
+            }
+             //background(curtain);
+      }
+    
+      
+     
+    }
+    else{
+    frm ++;
+    xpos = xpos + speed;
+    }
+    }
+    if (xpos < 0){
+      //xpos = xpos + width;
+      donutsTimeStamp = 0;
+      cookieTimeStamp = 0;
+      cookieTime = int(random(8 * frameRate , 10 * frameRate));
+      onMove[index] = 0;
+      onScreen[index] = 0;
+      xpos = 2 * width;
+    
+    }
+  }
+  
+  Cookie(PImage image, int ind){
+    index = ind;
+    frame = image;
+    
+    animation_frm = 0;
+    bg_mark = current_bg;
+    
+      int current_bg_index = int(random(0, _bgs.size() ));
+          
+          current_bg = _bgs.get(current_bg_index);
+          println(current_bg);
+          String fileName = "bg_" + nf(current_bg, 2) + ".jpg";
+          cookie_animation = loadImage(fileName);
+          _bgs.remove(current_bg_index);  
+          _bgs.append(bg_mark);     
+        
+}
+}
